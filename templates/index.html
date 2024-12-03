@@ -1,0 +1,25 @@
+{% extends 'layout.html' %} {% block content %}
+<h2 class="text-center">We Are Waiting For You...</h2>
+
+<!-- Sign up form -->
+<div class="card">
+  <div class="card-body">
+    <form action="{{ url_for('join') }}" method="POST">
+      
+      <div class="mb-3">
+        <label for="roomName" class="form-label">Join Room</label>
+        <input
+          type="text"
+          class="form-control"
+          id="roomName"
+          name="roomName"
+          placeholder="Room number"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+
+<!-- End of signup form -->
+{% endblock content %}

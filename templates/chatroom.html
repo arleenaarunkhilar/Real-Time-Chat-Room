@@ -1,0 +1,72 @@
+{% extends 'layout.html' %} {% block content %}
+
+<script>
+  // define socket
+  let socket;
+  $(document).ready(() => {
+    socket = io.connect("http://127.0.0.1:8000/join");
+    socket.on("connect", () => {
+      socket.emit("join", {});
+    });
+    socket.on("status", (data) => {
+      $("#chartArea").val($("#chartArea").val() + " " + data.msg + "\n");
+      // scroll to the top
+      $("#chartArea").scrollTop($("#chartArea")[0].scrollHeight);
+    });
+    socket.on("message", (data) => {
+      $("#chartArea").val($("#chartArea").val() + data.msg + "\n");
+      // scroll to the top
+      $("#chartArea").scrollTop($("#chartArea")[0].scrollHeight);
+    });
+    $("#submit-btn").click((e) => {
+      const text = $("#chatInput").val();
+      $("#chatInput").val("");
+      socket.emit("text", { msg: text });
+    });
+  });
+  const leaveRoom = () => {
+    socket.emit("left", {}, () => {
+      socket.disconnect();
+      window.location.href = "{{ url_for('index') }}";
+    });
+  };
+</script>
+
+<h2 class="text-center">Room {{session['room_name']}}</h2>
+
+<!-- Sign up form -->
+<div class="card">
+  <div class="card-body">
+    <div class="mb-3">
+      <div class="form-floating">
+        <textarea
+          style="height: 150px"
+          class="form-control"
+          placeholder="Chats..."
+          id="chartArea"
+        ></textarea>
+      </div>
+    </div>
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        id="chatInput"
+        placeholder="What's On Your Mind..?"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary" id="submit-btn">Post</button>
+  </div>
+  <button
+    type="submit"
+    class="btn btn-danger my-4 m-4"
+    id="submit-btn"
+    onclick="leaveRoom()"
+  >
+    Leave chat room
+  </button>
+</div>
+
+<!-- End of signup form -->
+{% endblock content %}
+
